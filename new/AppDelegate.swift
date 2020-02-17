@@ -8,21 +8,75 @@
 
 import UIKit
 import CoreData
-
+import GoogleSignIn
+import GoogleMaps
+import GooglePlaces
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
-
+class AppDelegate: UIResponder, UIApplicationDelegate , GIDSignInDelegate{
+    
+   
+    
+   
     var window: UIWindow?
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+//        GIDSignIn.sharedInstance().clientID = "822947803544-ludovapf10tidkpjds6uf6iaol18i76i.apps.googleusercontent.com"
+//        GIDSignIn.sharedInstance().delegate = self as! GIDSignInDelegate
         // Override point for customization after application launch.
+        GMSServices.provideAPIKey("822947803544-ludovapf10tidkpjds6uf6iaol18i76i.apps.googleusercontent.com")
+        GMSPlacesClient.provideAPIKey("822947803544-ludovapf10tidkpjds6uf6iaol18i76i.apps.googleusercontent.com")
+        GIDSignIn.sharedInstance().clientID = "822947803544-ludovapf10tidkpjds6uf6iaol18i76i.apps.googleusercontent.com"
+       
+        GIDSignIn.sharedInstance().delegate = self
+        
         return true
     }
-
+    
+  //  func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
+//        return GIDSignIn.sharedInstance().handleURL(url,sourceApplication: sourceApplication,annotation: annotation)
+        func application(_ application: UIApplication, open url: URL, sourceApplication: String?, annotation: Any) -> Bool{
+        return GIDSignIn.sharedInstance().handle(url)
+    }
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!,
+              withError error: Error!) {
+        if let error = error {
+            let userId = user.userID                  // For client-side use only!
+            let idToken = user.authentication.idToken // Safe to send to the server
+            let fullName = user.profile.name
+            let givenName = user.profile.givenName
+            let familyName = user.profile.familyName
+            let email = user.profile.email
+            if (error as NSError).code == GIDSignInErrorCode.hasNoAuthInKeychain.rawValue {
+                print("The user has not signed in before or they have since signed out.")
+            } else {
+                print("\(error.localizedDescription)")
+            }
+            
+            return
+        }
+   
+//        // Perform any operations on signed in user here.
+//        let userId = user.userID                  // For client-side use only!
+//       print("UserId ,\(userId) ")
+//        let idToken = user.authentication.idToken // Safe to send to the server
+//        let fullName = user.profile.name
+//        let givenName = user.profile.givenName
+//        let familyName = user.profile.familyName
+//        let email = user.profile.email
+//        // ...
+       
+    }
+   
+//    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+//
+//    }
+    
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
         // Use this method to pause ongoing tasks, disable timers, and invalidate graphics rendering callbacks. Games should use this method to pause the game.
+             
+        
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
